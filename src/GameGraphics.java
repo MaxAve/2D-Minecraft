@@ -9,6 +9,8 @@ public class GameGraphics {
 
     public GameGraphics() {
         loadImage("img/stone.png");
+        loadImage("img/dirt.png");
+        loadImage("img/grass_block.png");
     }
 
     private void loadImage(String path) {
@@ -38,6 +40,16 @@ public class GameGraphics {
                 for(int y = 0; y < imageData.length; y++) {
                     g.setColor(imageData[y][x]);
                     g.fillRect(xpos + x * scale, ypos + y * scale, scale, scale);
+                }
+            }
+        }
+    }
+
+    public void renderTerrain(Graphics g, int scale, int xOffset, int yOffset) {
+        for(int x = 0; x < Terrain.overworld[0].length; x++) {
+            for(int y = 0; y < Terrain.overworld.length; y++) {
+                if(Tile.getTile(Terrain.overworld[y][x]).imagePath != null) {
+                    renderImage(g, Tile.getTile(Terrain.overworld[y][x]).imagePath, scale, x * 16 * scale + xOffset, y * 16 * scale + yOffset);
                 }
             }
         }

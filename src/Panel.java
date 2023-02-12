@@ -33,14 +33,15 @@ public class Panel extends JPanel implements ActionListener {
 	}
 	
 	public void draw(Graphics g) {
-        for(int i = 0; i < 30; i++)
-            for(int j = 0; j < 30; j++)
-                Main.defaultGraphics.renderImage(g, "img/stone.png", 3, 20 + i*48, 20 + j * 48);
+        Main.defaultGraphics.renderTerrain(g, 3, -playerX, -playerY);
 
-        // FPS counter
+        // Debug
         g.setColor(Color.WHITE);
         g.setFont(new Font(null, Font.PLAIN, 18));
-        g.drawString("FPS: " + getFPS(), 20, 40);
+
+        g.drawString("FPS: " + getFPS(), 20, 40); // FPS counter
+        g.drawString("Position: " + playerX + ", " + playerY, 20, 60); // Position
+
         frames++;
 	}
 	
@@ -49,12 +50,26 @@ public class Panel extends JPanel implements ActionListener {
 		repaint();
 	}
 
+    //TODO remove later
+    public static int playerX=0, playerY=3000, speed=20;
+
     // Key adapter
 	public class MyKeyAdapter extends KeyAdapter {
 		@Override
 		public void keyPressed(KeyEvent e) {
 			switch(e.getKeyCode()) {
-
+                case KeyEvent.VK_W:
+                playerY -= speed;
+                break;
+                case KeyEvent.VK_A:
+                playerX -= speed;
+                break;
+                case KeyEvent.VK_S:
+                playerY += speed;
+                break;
+                case KeyEvent.VK_D:
+                playerX += speed;
+                break;
 			}
 		}
 	}
