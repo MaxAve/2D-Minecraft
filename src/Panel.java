@@ -33,7 +33,7 @@ public class Panel extends JPanel implements ActionListener {
 	}
 	
 	public void draw(Graphics g) {
-        Main.defaultGraphics.renderTerrain(g, 3, -playerX, -playerY);
+        GameGraphics.renderTerrain(g, -playerX, -playerY);
 
         // Debug
         g.setColor(Color.WHITE);
@@ -51,13 +51,15 @@ public class Panel extends JPanel implements ActionListener {
 	}
 
     //TODO remove later
-    public static int playerX=0, playerY=3000, speed=20;
+    public static int playerX=0, playerY=0, speed=50;
 
     // Key adapter
 	public class MyKeyAdapter extends KeyAdapter {
 		@Override
 		public void keyPressed(KeyEvent e) {
 			switch(e.getKeyCode()) {
+                case KeyEvent.VK_X:
+                GameSettings.xRayModeOn = !GameSettings.xRayModeOn;
                 case KeyEvent.VK_W:
                 playerY -= speed;
                 break;
