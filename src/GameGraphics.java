@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 
 public class GameGraphics {
     // Default atlas for tiles
-    public static TextureAtlas defaultTileAtlas = new TextureAtlas(10, 10, "img/block_atlas.png");
+    public static TextureAtlas defaultTileAtlas = new TextureAtlas(16, 16, "img/block_atlas_16x16.png");
 
     // An atlas is basically a bunch of texture put into one image
     // With this class you can generate new atlases and get textures from them
@@ -54,7 +54,7 @@ public class GameGraphics {
         Color[][] imageColorData = new Color[image.getHeight()][image.getWidth()];
         for(int x = 0; x < image.getWidth(); x++) {
             for(int y = 0; y < image.getHeight(); y++) {
-                imageColorData[y][x] = new Color(image.getRGB(x, y));
+                imageColorData[y][x] = new Color(image.getRGB(x, y), true);
             }
         }
         return imageColorData;
@@ -74,12 +74,58 @@ public class GameGraphics {
         renderImage(x, y, defaultTileAtlas.getTexture(tile.atlasImageLink.x, tile.atlasImageLink.y), GameSettings.tileRenderScale, g);
     }
 
+    public static short tilesRendered = 0; // The number of tiles rendered in the last frame
+
     // Renders the entire terrain
     public static void renderTerrain(Graphics g, int xOffset, int yOffset) {
+        tilesRendered = 0;
         for(int i = 0; i < Terrain.overworld.length; i++) {
             for(int j = 0; j < Terrain.overworld[0].length; j++) {
-                if(Tile.getTile(Terrain.overworld[i][j]).atlasImageLink != null) {
-                    GameGraphics.renderTile(j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset, i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset, Tile.getTile(Terrain.overworld[i][j]), g);
+                // Render block if an image is assigned to it and it is within reasonable range AND it is not off the screen
+                if(Math.sqrt(Math.pow((j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset) - Panel.SCREEN_WIDTH/2, 2) + Math.pow((i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset) - Panel.SCREEN_HEIGHT/2, 2)) < GameSettings.tileRenderDistance && (j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset) > -Tile.DEFAULT_TILE_SIZE*GameSettings.tileRenderScale && (j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset) < Panel.SCREEN_WIDTH + Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale && (i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset) > -Tile.DEFAULT_TILE_SIZE*GameSettings.tileRenderScale && (i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset) < Panel.SCREEN_WIDTH + Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale) {
+                    if(Tile.getTile(Terrain.overworld[i][j]) != null && Tile.getTile(Terrain.overworld[i][j]).atlasImageLink != null) {
+                        // The tile will be rendered if there is a transparent tile next to it or xray is on
+                        if(GameSettings.xRayModeOn) {
+                            GameGraphics.renderTile(j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset, i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset, Tile.getTile(Terrain.overworld[i][j]), g);
+                        } else if((i < Terrain.overworld.length-1 && i > 0 && j < Terrain.overworld[0].length-1 && j > 0)) {
+                            try {
+                                if (Tile.getTile(Terrain.overworld[i+1][j]).isTransparent
+                                    || Tile.getTile(Terrain.overworld[i-1][j]).isTransparent
+                                    || Tile.getTile(Terrain.overworld[i][j+1]).isTransparent
+                                    || Tile.getTile(Terrain.overworld[i][j-1]).isTransparent
+                                ) {
+                                    // Draws a tile
+                                    GameGraphics.renderTile(j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset, i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset, Tile.getTile(Terrain.overworld[i][j]), g);
+                                } else {
+                                    // Draws a black tile
+                                    g.setColor(Color.BLACK);
+                                    g.fillRect(j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset, i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset, Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale, Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale);
+                                }
+                            } catch(IndexOutOfBoundsException e){} // Ignore IndexOutOfBoundsException
+                        } else {
+                            // Draws a tile
+                            GameGraphics.renderTile(j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset, i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset, Tile.getTile(Terrain.overworld[i][j]), g);
+                        }
+                        tilesRendered++;
+                    }
+
+                    // Block selection with mouse
+                    // Blocks can only be selected if they are next to an air block
+                    try {
+                        if (Tile.getTile(Terrain.overworld[i+1][j]).soft
+                        || Tile.getTile(Terrain.overworld[i-1][j]).soft
+                        || Tile.getTile(Terrain.overworld[i][j+1]).soft
+                        || Tile.getTile(Terrain.overworld[i][j-1]).soft
+                        ) {
+                            if(MouseInfo.getPointerInfo().getLocation().getX() < j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset + Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale
+                            && MouseInfo.getPointerInfo().getLocation().getX() > j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset
+                            && MouseInfo.getPointerInfo().getLocation().getY() > i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset
+                            && MouseInfo.getPointerInfo().getLocation().getY() < i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset + Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale) {
+                                Terrain.selectedBlockX = j;
+                                Terrain.selectedBlockY = i;
+                            }
+                        }
+                    } catch(ArrayIndexOutOfBoundsException e) {}
                 }
             }
         }

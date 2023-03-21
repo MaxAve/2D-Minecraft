@@ -21,6 +21,15 @@ public class Frame extends JFrame {
 		    public void mouseClicked(MouseEvent e) {
 		        mouseClickX = e.getX();
 		        mouseClickY = e.getY();
+                if(Tile.getTile(Terrain.overworld[Terrain.selectedBlockY][Terrain.selectedBlockX]).name.equals("air")) {
+                    Terrain.overworld[Terrain.selectedBlockY][Terrain.selectedBlockX] = Tile.getTileID("cobblestone");
+                } else {
+                    if(Tile.getTile(Terrain.overworld[Terrain.selectedBlockY][Terrain.selectedBlockX]).name.equals("thick_oak_leaves")) {
+                        Terrain.overworld[Terrain.selectedBlockY][Terrain.selectedBlockX] = Tile.getTileID("oak_wood");
+                    } else {
+                        Terrain.overworld[Terrain.selectedBlockY][Terrain.selectedBlockX] = Tile.getTileID("air");
+                    }
+                }
 		    }
 
             @Override
