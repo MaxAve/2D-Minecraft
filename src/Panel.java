@@ -10,14 +10,14 @@ public class Panel extends JPanel implements ActionListener {
 
 	Timer timer;
 
-    // Number of frame updates, this lets us calculate the FPS
-    private static short frames = 0;
+    // Debug data
+    private static int frames = 0;
 
 	// Constructor
 	// Initializes the Panel
 	public Panel() {
 		this.setPreferredSize(new Dimension(SCREEN_WIDTH/2, SCREEN_HEIGHT/2));
-		this.setBackground(new Color(199, 229, 252));
+		this.setBackground(new Color(198, 223, 247));
 		this.setFocusable(true);
 		this.addKeyListener(new MyKeyAdapter());
 		timer = new Timer(0, this);
@@ -40,9 +40,19 @@ public class Panel extends JPanel implements ActionListener {
         /*
          * Selected block highlight
          */
-        g.setColor(new Color(255, 255, 255, 120));
-        g.fillRect(Terrain.selectedBlockX * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale - playerX, Terrain.selectedBlockY * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale - playerY, Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale, Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale);
-
+        try {
+            if(Tile.getTile(Terrain.overworld[Terrain.selectedBlockY][Terrain.selectedBlockX]).name.equals("air")) {
+                GameGraphics.renderTile(Terrain.selectedBlockX * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale - playerX, Terrain.selectedBlockY * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale - playerY, Tile.getTileByName(Inventory.selectedItem), g, 100);
+            } else {
+                g.setColor(new Color(255, 255, 255, 120));
+                g.fillRect(
+                    Terrain.selectedBlockX * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale - playerX,
+                    Terrain.selectedBlockY * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale - playerY,
+                    Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale,
+                    Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale
+                );
+            }
+        } catch(Exception e){}
         /*
          * In-game debug output (aka F3)
          */
@@ -54,7 +64,8 @@ public class Panel extends JPanel implements ActionListener {
             g.drawString("Position - x: " + playerX + ", y: " + playerY, 20, 60); // Position
             g.drawString("XRay: " + (GameSettings.xRayModeOn ? "true" : "false"), 20, 80); // XRay toggle
             g.drawString("Rendering: " + GameGraphics.tilesRendered + " tiles", 20, 100);
-            g.drawString("Block - (x: " + Terrain.selectedBlockX + ", y: " + Terrain.selectedBlockY + "): " + Tile.getSelectedBlock().name, 20, 120);
+            g.drawString("Block - (x: " + Terrain.selectedBlockX + ", y: " + Terrain.selectedBlockY + ")", 20, 120);
+            g.drawString("Active particles: " + Particle.particles.size(), 20, 140);
 
             // FPS graph
             g.setColor(Color.BLACK);
@@ -71,6 +82,14 @@ public class Panel extends JPanel implements ActionListener {
             g.drawString("Average: " + Debug.averageFPS, 25, SCREEN_HEIGHT - 360);
             g.drawString("Min: " + Debug.minFPS, 25, SCREEN_HEIGHT - 340);
             g.drawString("Max: " + Debug.maxFPS, 25, SCREEN_HEIGHT - 320);
+        }
+
+        for(int i = 0; i < Particle.particles.size(); i++) {
+            Particle.particles.get(i).updatePhysicsState();
+            Particle.particles.get(i).renderParticle(g);
+            if(Particle.particles.get(i).position.y > SCREEN_HEIGHT) {
+                Particle.particles.remove(i);
+            }
         }
 
         frames++;
@@ -107,6 +126,32 @@ public class Panel extends JPanel implements ActionListener {
                 case KeyEvent.VK_F3:
                     GameSettings.showDebug = !GameSettings.showDebug;
                     break;
+
+                // Temporary test feature
+                case KeyEvent.VK_1:
+                    Inventory.selectedItem = "cobblestone";
+                    break;
+                case KeyEvent.VK_2:
+                    Inventory.selectedItem = "bricks";
+                    break;
+                case KeyEvent.VK_3:
+                    Inventory.selectedItem = "glass";
+                    break;
+                case KeyEvent.VK_4:
+                    Inventory.selectedItem = "oak_wood";
+                    break;
+                case KeyEvent.VK_5:
+                    Inventory.selectedItem = "oak_planks";
+                    break;
+                case KeyEvent.VK_6:
+                    Inventory.selectedItem = "sand";
+                    break;
+                case KeyEvent.VK_7:
+                    Inventory.selectedItem = "gravel";
+                    break;
+                case KeyEvent.VK_8:
+                    Inventory.selectedItem = "water";
+                    break;
 			}
 		}
 	}
@@ -128,7 +173,7 @@ public class Panel extends JPanel implements ActionListener {
         }
     }
 
-    public static short getFPS() {
+    public static int getFPS() {
         return Debug.FPS;
     }
 }

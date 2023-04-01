@@ -1,11 +1,11 @@
 import java.util.ArrayList;
 
 public class Debug {
-    public static short FPS = 0;
+    public static int FPS = 0;
     public static int averageFPS = 0;
     public static int minFPS = 2147483647;
     public static int maxFPS = 0;
-    public static ArrayList<Short> fpsGraph = new ArrayList<>();
+    public static ArrayList<Integer> fpsGraph = new ArrayList<>();
 
     // Records FPS data
     public static void recordFPS() {

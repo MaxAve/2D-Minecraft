@@ -1,10 +1,12 @@
 import java.util.Random;
 
 public class Terrain {
+    public static final short WORLD_HEIGHT = 200;
+
     // Worlds are stored as 2D arrays of 8-bit integer values, which represent tile IDs
-    public static short[][] overworld = new short[200][100];
-    public static final int LOADED_TERRAIN_WIDTH = overworld[0].length;
-    public static final int LOADED_TERRAIN_HEIGHT = overworld.length;
+    public static char[][] overworld = new char[WORLD_HEIGHT][64];
+
+    public static final short SEA_LEVEL = 64;
 
     public static int selectedBlockX = -1;
     public static int selectedBlockY = -1;
@@ -99,7 +101,7 @@ public class Terrain {
     /*
      * Generates an overworld-type terrain
      */
-    private static short currentTerrainPillarHeight = 80;
+    private static short currentTerrainPillarHeight = 64;
     public static void generateTerrain(int stepRange, int stepChance, int treeDistribution, int grassDistribution, int terrainInclineDirectionChangeChance, boolean inclineStartUpwards) {
         for(int i = 0; i < overworld.length; i++) {
             for(int j = 0; j < overworld[0].length; j++) {
@@ -115,7 +117,7 @@ public class Terrain {
         for(int x = 0; x < overworld[0].length; x++) {
             // Terrain (bedrock, stone, dirt, grass)
             for(int i = 0; i < currentTerrainPillarHeight; i++) {
-                short tileType = 0;
+                char tileType = 0;
                 if(i == 0) {
                     tileType = Tile.getTileID("bedrock");
                 } else if(i == 1) {
@@ -133,15 +135,25 @@ public class Terrain {
                 } else if(i < currentTerrainPillarHeight - 5) {
                     tileType = Tile.getTileID("stone");
                 } else if(i < currentTerrainPillarHeight - 1) {
-                    tileType = Tile.getTileID("dirt");
+                    if(currentTerrainPillarHeight < SEA_LEVEL)
+                        tileType = Tile.getTileID("sand");
+                    else
+                        tileType = Tile.getTileID("dirt");
                 } else {
-                    tileType = Tile.getTileID("grass_block");
+                    if(currentTerrainPillarHeight < SEA_LEVEL)
+                        tileType = Tile.getTileID("sand");   
+                    else
+                        tileType = Tile.getTileID("grass_block");
                 }
                 overworld[overworld.length - i - 1][x] = tileType;
             }
 
             // Grass
-            if(random.nextInt(100) < grassDistribution && overworld[overworld.length - currentTerrainPillarHeight - 1][x] == Tile.getTileID("air")) {
+            if(
+                random.nextInt(100) < grassDistribution
+                && overworld[overworld.length - currentTerrainPillarHeight - 1][x] == Tile.getTileID("air")
+                && (overworld[overworld.length - currentTerrainPillarHeight][x] == Tile.getTileID("grass_block") || overworld[overworld.length - currentTerrainPillarHeight][x] == Tile.getTileID("dirt"))
+            ) {
                 overworld[overworld.length - currentTerrainPillarHeight - 1][x] = Tile.getTileID("grass");
             }
 
@@ -162,6 +174,13 @@ public class Terrain {
             // Attempt to change incline direction
             if(random.nextInt(100) < terrainInclineDirectionChangeChance) {
                 rising = !rising;
+            }
+
+            // Water
+            for(int y = 0; y < overworld.length; y++) {
+                if(y > WORLD_HEIGHT - SEA_LEVEL + 1 && Tile.getTile(overworld[y][x]).name.equals("air")) {
+                    overworld[y][x] = Tile.getTileID("water");
+                }
             }
 
             // Ore vein bases
@@ -207,9 +226,55 @@ public class Terrain {
         }
     }
 
+    // Attempts to generate an ore
+    // An ore will generate with a chance of generationChance
     public static void attemptOreGeneration(int x, int y, String ore, String replacable, double generationChance, int depth) {
         if(random.nextDouble(100) < generationChance * (double)((y/overworld.length) + 1) && y > overworld.length - depth && Tile.getTile(overworld[y][x]).name.equals(replacable)) {
             overworld[y][x] = Tile.getTileID(ore);
         }
-    }    
+    }
+
+    // A shortcut for getting block names
+    public static String getBlock(int x, int y) {
+        return Tile.getTile(overworld[y][x]).name;
+    }
+
+    // A shortcut for setting blocks
+    public static void setBlock(int x, int y, String blockName) {
+        overworld[y][x] = Tile.getTileID(blockName);
+    }
+    
+    // Updates blocks
+    //TODO Optimize
+    public static void updateBlocks() {
+        for(int i = 0; i < overworld.length; i++) {
+            for(int j = 0; j < overworld[0].length; j++) {
+                try {
+                    // Spread water and update blocks again until water has filled all empty space
+                    if(
+                        getBlock(j, i).equals("water") &&
+                        (getBlock(j-1, i).equals("air") || getBlock(j+1, i).equals("air") || getBlock(j, i+1).equals("air"))
+                    ) {
+                        final int i_ = i;
+                        final int j_ = j;
+                        Thread t = new Thread(){
+                            public void run(){
+                                try {
+                                    if(getBlock(j_-1, i_).equals("air"))
+                                        setBlock(j_-1, i_, "water");
+                                    if(getBlock(j_+1, i_).equals("air"))
+                                        setBlock(j_+1, i_, "water");
+                                    if(getBlock(j_, i_+1).equals("air"))
+                                        setBlock(j_, i_+1, "water");
+                                    sleep(200);
+                                    updateBlocks();
+                                } catch (InterruptedException e) {}
+                            }
+                        };
+                        t.start();
+                    }
+                } catch(IndexOutOfBoundsException e){} // Ignores IndexOutOfBoundsException
+            }
+        }
+    }
 }

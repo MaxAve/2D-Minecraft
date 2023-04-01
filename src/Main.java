@@ -6,6 +6,6 @@ public class Main {
         System.out.flush(); 
         new Frame();
         Tile.generateTiles();
-        Terrain.generateTerrain(3, 35, 20, 50, 20, true);
+        Terrain.generateTerrain(3, 35, 20, 50, 30, false);
     }
 }

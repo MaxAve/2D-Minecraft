@@ -61,17 +61,21 @@ public class GameGraphics {
     }
 
     // Draws a Color[][] instance to the screen
-    public static void renderImage(int x, int y, Color[][] image, int scale, Graphics g) {
+    public static void renderImage(int x, int y, Color[][] image, int scale, Graphics g, int a) {
         for(int i = 0; i < image.length; i++) {
             for(int j = 0; j < image[0].length; j++) {
-                g.setColor(image[i][j]);
+                if(image[i][j].getAlpha() >= 255) {
+                    g.setColor(new Color(image[i][j].getRed(), image[i][j].getGreen(), image[i][j].getBlue(), a));
+                } else {
+                    g.setColor(image[i][j]);
+                }
                 g.fillRect(x+j*scale, y+i*scale, scale, scale);
             }
         }
     }
 
-    public static void renderTile(int x, int y, Tile tile, Graphics g) {
-        renderImage(x, y, defaultTileAtlas.getTexture(tile.atlasImageLink.x, tile.atlasImageLink.y), GameSettings.tileRenderScale, g);
+    public static void renderTile(int x, int y, Tile tile, Graphics g, int a) {
+        renderImage(x, y, defaultTileAtlas.getTexture(tile.atlasImageLink.x, tile.atlasImageLink.y), GameSettings.tileRenderScale, g, a);
     }
 
     public static short tilesRendered = 0; // The number of tiles rendered in the last frame
@@ -86,7 +90,7 @@ public class GameGraphics {
                     if(Tile.getTile(Terrain.overworld[i][j]) != null && Tile.getTile(Terrain.overworld[i][j]).atlasImageLink != null) {
                         // The tile will be rendered if there is a transparent tile next to it or xray is on
                         if(GameSettings.xRayModeOn) {
-                            GameGraphics.renderTile(j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset, i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset, Tile.getTile(Terrain.overworld[i][j]), g);
+                            GameGraphics.renderTile(j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset, i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset, Tile.getTile(Terrain.overworld[i][j]), g, 255);
                         } else if((i < Terrain.overworld.length-1 && i > 0 && j < Terrain.overworld[0].length-1 && j > 0)) {
                             try {
                                 if (Tile.getTile(Terrain.overworld[i+1][j]).isTransparent
@@ -95,7 +99,7 @@ public class GameGraphics {
                                     || Tile.getTile(Terrain.overworld[i][j-1]).isTransparent
                                 ) {
                                     // Draws a tile
-                                    GameGraphics.renderTile(j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset, i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset, Tile.getTile(Terrain.overworld[i][j]), g);
+                                    GameGraphics.renderTile(j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset, i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset, Tile.getTile(Terrain.overworld[i][j]), g, 255);
                                 } else {
                                     // Draws a black tile
                                     g.setColor(Color.BLACK);
@@ -104,7 +108,7 @@ public class GameGraphics {
                             } catch(IndexOutOfBoundsException e){} // Ignore IndexOutOfBoundsException
                         } else {
                             // Draws a tile
-                            GameGraphics.renderTile(j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset, i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset, Tile.getTile(Terrain.overworld[i][j]), g);
+                            GameGraphics.renderTile(j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset, i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset, Tile.getTile(Terrain.overworld[i][j]), g, 255);
                         }
                         tilesRendered++;
                     }
@@ -125,7 +129,7 @@ public class GameGraphics {
                                 Terrain.selectedBlockY = i;
                             }
                         }
-                    } catch(ArrayIndexOutOfBoundsException e) {}
+                    } catch(Exception e) {}
                 }
             }
         }
