@@ -21,9 +21,7 @@ public class Frame extends JFrame {
 		this.setLocationRelativeTo(null);
         this.setIcon("img/Grass Block.png");
 		this.addMouseListener(new MouseListener() {
-            /*
-             * Triggers when the program detects a mouse click
-             */
+            // Triggered when user clicks mouse
 		    @Override
 		    public void mouseClicked(MouseEvent e) {
 		        mouseClickX = e.getX();

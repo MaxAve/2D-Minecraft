@@ -32,30 +32,21 @@ public class Panel extends JPanel implements ActionListener {
 	}
 	
 	public void draw(Graphics g) {
-        /*
-         * Terrain rendering
-         */
+        // Terrain rendering
         GameGraphics.renderTerrain(g, -playerX, -playerY);
 
-        /*
-         * Selected block highlight
-         */
+        // Selected block highlight
         try {
-            if(Tile.getTile(Terrain.overworld[Terrain.selectedBlockY][Terrain.selectedBlockX]).name.equals("air")) {
-                GameGraphics.renderTile(Terrain.selectedBlockX * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale - playerX, Terrain.selectedBlockY * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale - playerY, Tile.getTileByName(Inventory.selectedItem), g, 100);
-            } else {
-                g.setColor(new Color(255, 255, 255, 120));
-                g.fillRect(
-                    Terrain.selectedBlockX * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale - playerX,
-                    Terrain.selectedBlockY * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale - playerY,
-                    Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale,
-                    Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale
-                );
-            }
+            g.setColor(Color.BLACK);
+            g.drawRect(
+                Terrain.selectedBlockX * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale - playerX,
+                Terrain.selectedBlockY * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale - playerY,
+                Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale,
+                Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale
+            );
         } catch(Exception e){}
-        /*
-         * In-game debug output (aka F3)
-         */
+
+        // F3 screen
         if(GameSettings.showDebug) {
             g.setColor(Color.WHITE);
             g.setFont(new Font(null, Font.PLAIN, 18));
@@ -151,6 +142,12 @@ public class Panel extends JPanel implements ActionListener {
                     break;
                 case KeyEvent.VK_8:
                     Inventory.selectedItem = "water";
+                    break;
+                case KeyEvent.VK_9:
+                    Inventory.selectedItem = "torch";
+                    break;
+                case KeyEvent.VK_R:
+                    Lighting.updateLight();
                     break;
 			}
 		}

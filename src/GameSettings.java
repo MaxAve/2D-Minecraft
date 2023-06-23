@@ -3,8 +3,8 @@ public class GameSettings {
      * Real-time game settings (toggleable during gameplay)
      */
     public static boolean xRayModeOn = true;
-    public static int tileRenderScale = 5;
-    public static int tileRenderDistance = 1200;
+    public static int tileRenderScale = 7;
+    public static int tileRenderDistance = 1300;
     public static boolean showDebug = true;
 
     /*

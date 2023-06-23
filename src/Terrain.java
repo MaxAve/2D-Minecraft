@@ -245,36 +245,65 @@ public class Terrain {
     }
     
     // Updates blocks
-    //TODO Optimize
     public static void updateBlocks() {
         for(int i = 0; i < overworld.length; i++) {
             for(int j = 0; j < overworld[0].length; j++) {
                 try {
-                    // Spread water and update blocks again until water has filled all empty space
-                    if(
-                        getBlock(j, i).equals("water") &&
-                        (getBlock(j-1, i).equals("air") || getBlock(j+1, i).equals("air") || getBlock(j, i+1).equals("air"))
-                    ) {
-                        final int i_ = i;
-                        final int j_ = j;
-                        Thread t = new Thread(){
-                            public void run(){
-                                try {
-                                    if(getBlock(j_-1, i_).equals("air"))
-                                        setBlock(j_-1, i_, "water");
-                                    if(getBlock(j_+1, i_).equals("air"))
-                                        setBlock(j_+1, i_, "water");
-                                    if(getBlock(j_, i_+1).equals("air"))
-                                        setBlock(j_, i_+1, "water");
-                                    sleep(200);
-                                    updateBlocks();
-                                } catch (InterruptedException e) {}
+                    final int i_ = i;
+                    final int j_ = j;
+                    switch(getBlock(j, i)) {
+                        case "water": {
+                            // Spread water and update blocks again until water has filled all empty space
+                            if((getBlock(j-1, i).equals("air") || getBlock(j+1, i).equals("air") || getBlock(j, i+1).equals("air"))) {
+                                Thread t = new Thread(){
+                                    public void run(){
+                                        try {
+                                            if(Tile.getTileByName(getBlock(j_-1, i_)).soft && !getBlock(j_-1, i_).equals("water"))
+                                                setBlock(j_-1, i_, "water");
+                                            if(Tile.getTileByName(getBlock(j_+1, i_)).soft && !getBlock(j_+1, i_).equals("water"))
+                                                setBlock(j_+1, i_, "water");
+                                            if(Tile.getTileByName(getBlock(j_, i_+1)).soft && !getBlock(j_, i_+1).equals("water"))
+                                                setBlock(j_, i_+1, "water");
+                                            sleep(200);
+                                            updateBlocks();
+                                        } catch (InterruptedException e) {}
+                                    }
+                                };
+                                t.start();
                             }
-                        };
-                        t.start();
+                            break;
+                        }
+                        
+                        case "grass": {
+                            // Grass should break if the block below is broken
+                            if(getBlock(j_, i_+1) == "air")
+                                setBlock(j_, i_, "air");
+                            break;
+                        }
+
+                        case "sand": {
+                            // Fall
+                            if(Tile.getTileByName(getBlock(j_, i_+1)).soft) {
+                                setBlock(j_, i_, "air");
+                                setBlock(j_, i_+1, "sand");
+                                updateBlocks();
+                            }
+                            break;
+                        }
+
+                        case "gravel": {
+                            // Fall
+                            if(Tile.getTileByName(getBlock(j_, i_+1)).soft) {
+                                setBlock(j_, i_, "air");
+                                setBlock(j_, i_+1, "gravel");
+                                updateBlocks();
+                            }
+                            break;
+                        }
                     }
                 } catch(IndexOutOfBoundsException e){} // Ignores IndexOutOfBoundsException
             }
         }
+        Lighting.updateLight();
     }
 }

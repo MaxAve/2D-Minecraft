@@ -39,11 +39,6 @@ public class GameGraphics {
         }
     }
 
-    /**
-     * Returns a Color[][] instance which represents an image
-     * @param path
-     * @return
-     */
     public Color[][] imageTo2D(String path) {
         BufferedImage image = null;
         try {
@@ -89,9 +84,9 @@ public class GameGraphics {
                 if(Math.sqrt(Math.pow((j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset) - Panel.SCREEN_WIDTH/2, 2) + Math.pow((i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset) - Panel.SCREEN_HEIGHT/2, 2)) < GameSettings.tileRenderDistance && (j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset) > -Tile.DEFAULT_TILE_SIZE*GameSettings.tileRenderScale && (j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset) < Panel.SCREEN_WIDTH + Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale && (i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset) > -Tile.DEFAULT_TILE_SIZE*GameSettings.tileRenderScale && (i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset) < Panel.SCREEN_WIDTH + Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale) {
                     if(Tile.getTile(Terrain.overworld[i][j]) != null && Tile.getTile(Terrain.overworld[i][j]).atlasImageLink != null) {
                         // The tile will be rendered if there is a transparent tile next to it or xray is on
-                        if(GameSettings.xRayModeOn) {
-                            GameGraphics.renderTile(j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset, i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset, Tile.getTile(Terrain.overworld[i][j]), g, 255);
-                        } else if((i < Terrain.overworld.length-1 && i > 0 && j < Terrain.overworld[0].length-1 && j > 0)) {
+                        //if(GameSettings.xRayModeOn) {
+                        GameGraphics.renderTile(j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset, i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset, Tile.getTile(Terrain.overworld[i][j]), g, 255);
+/*                         } else if((i < Terrain.overworld.length-1 && i > 0 && j < Terrain.overworld[0].length-1 && j > 0)) {
                             try {
                                 if (Tile.getTile(Terrain.overworld[i+1][j]).isTransparent
                                     || Tile.getTile(Terrain.overworld[i-1][j]).isTransparent
@@ -106,11 +101,17 @@ public class GameGraphics {
                                     g.fillRect(j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset, i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset, Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale, Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale);
                                 }
                             } catch(IndexOutOfBoundsException e){} // Ignore IndexOutOfBoundsException
-                        } else {
+                            } else {
                             // Draws a tile
                             GameGraphics.renderTile(j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset, i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset, Tile.getTile(Terrain.overworld[i][j]), g, 255);
-                        }
+                        } */
                         tilesRendered++;
+                    }
+
+                    // Render shadow
+                    if(!GameSettings.xRayModeOn && j < Lighting.lightLevelMap[0].length) {
+                        g.setColor(new Color(0, 0, 0, 255-Lighting.lightLevelMap[i][j] < 0 ? 0 : 255-Lighting.lightLevelMap[i][j]));
+                        g.fillRect(j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset, i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset, Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale, Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale);
                     }
 
                     // Block selection with mouse
