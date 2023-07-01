@@ -53,23 +53,5 @@ public class Lighting {
                 }
             }
         }
-
-        // Smoothen out general light (only exposed blocks)
-        for(int x = 0; x < lightLevelMap[0].length; x++) {
-            for(int y = 1; y < lightLevelMap.length; y++) {
-                try {
-                    if (
-                        Tile.getTile(Terrain.overworld[y+1][x]).isTransparent
-                        || Tile.getTile(Terrain.overworld[y-1][x]).isTransparent
-                        || Tile.getTile(Terrain.overworld[y][x+1]).isTransparent
-                        || Tile.getTile(Terrain.overworld[y][x-1]).isTransparent
-                    ) {
-                        if(lightLevelMap[y][x] < 255) {
-                            lightLevelMap[y][x] = (lightLevelMap[y-1][x] + lightLevelMap[y+1][x] + lightLevelMap[y][x-1] + lightLevelMap[y][x+1] + lightLevelMap[y][x]) / 4;
-                        }
-                    }
-                } catch(IndexOutOfBoundsException e){}
-            }
-        }
     }
 }
