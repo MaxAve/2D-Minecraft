@@ -33,14 +33,14 @@ public class Panel extends JPanel implements ActionListener {
 	
 	public void draw(Graphics g) {
         // Terrain rendering
-        GameGraphics.renderTerrain(g, -playerX, -playerY);
+        GameGraphics.renderTerrain(g, (int)(-playerX * GameSettings.tileRenderScale * Tile.DEFAULT_TILE_SIZE), (int)(-playerY * GameSettings.tileRenderScale * Tile.DEFAULT_TILE_SIZE));
 
         // Selected block highlight
         try {
             g.setColor(Color.BLACK);
             g.drawRect(
-                Terrain.selectedBlockX * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale - playerX,
-                Terrain.selectedBlockY * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale - playerY,
+                Terrain.selectedBlockX * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale - (int)(playerX * GameSettings.tileRenderScale * Tile.DEFAULT_TILE_SIZE),
+                Terrain.selectedBlockY * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale - (int)(playerY * GameSettings.tileRenderScale * Tile.DEFAULT_TILE_SIZE),
                 Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale,
                 Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale
             );
@@ -91,8 +91,7 @@ public class Panel extends JPanel implements ActionListener {
 		repaint();
 	}
 
-    //TODO remove later
-    public static int playerX=0, playerY=9000, speed=50;
+    public static float playerX=5, playerY=130, speed=0.5f;
 
     // Key adapter
 	public class MyKeyAdapter extends KeyAdapter {

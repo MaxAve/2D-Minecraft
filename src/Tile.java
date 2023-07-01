@@ -1,38 +1,35 @@
 public class Tile {
     public static java.util.ArrayList<Tile> tileInstances = new java.util.ArrayList<>(); // Tile instances are stored here
-    public static final int DEFAULT_TILE_SIZE = 16; // Tile size in pixels
 
-    // ----------------------------------------------------------
-    //
-    //      WHEN CREATING NEW TILES, ADD THEM TO THIS METHOD
-    //
-    // ----------------------------------------------------------
+    public static final int DEFAULT_TILE_SIZE = 16;
+    public static final int OPAQUE_BLOCK = 100;
+
     public static void generateTiles() {
         newTile("air", null, null, true, true, false, 0);
-        newTile("stone", GameGraphics.defaultTileAtlas, new Vector2.Int32(0, 0), false, false, true, 60);
-        newTile("dirt", GameGraphics.defaultTileAtlas, new Vector2.Int32(1, 0), false, false, true, 60);
-        newTile("grass_block", GameGraphics.defaultTileAtlas, new Vector2.Int32(2, 0), false, false, true, 60);
-        newTile("oak_wood", GameGraphics.defaultTileAtlas, new Vector2.Int32(3, 0), false, false, true, 60);
+        newTile("stone", GameGraphics.defaultTileAtlas, new Vector2.Int32(0, 0), false, false, true, OPAQUE_BLOCK);
+        newTile("dirt", GameGraphics.defaultTileAtlas, new Vector2.Int32(1, 0), false, false, true, OPAQUE_BLOCK);
+        newTile("grass_block", GameGraphics.defaultTileAtlas, new Vector2.Int32(2, 0), false, false, true, OPAQUE_BLOCK);
+        newTile("oak_wood", GameGraphics.defaultTileAtlas, new Vector2.Int32(3, 0), false, false, true, OPAQUE_BLOCK);
         newTile("oak_leaves", GameGraphics.defaultTileAtlas, new Vector2.Int32(4, 0), true, false, true, 15);
-        newTile("thick_oak_leaves", GameGraphics.defaultTileAtlas, new Vector2.Int32(5, 0), false, false, true, 60);
-        newTile("bedrock", GameGraphics.defaultTileAtlas, new Vector2.Int32(6, 0), false, false, false, 60);
-        newTile("coal_ore", GameGraphics.defaultTileAtlas, new Vector2.Int32(7, 0), false, false, true, 60);
-        newTile("iron_ore", GameGraphics.defaultTileAtlas, new Vector2.Int32(8, 0), false, false, true, 60);
-        newTile("redstone_ore", GameGraphics.defaultTileAtlas, new Vector2.Int32(9, 0), false, false, true, 60);
-        newTile("gold_ore", GameGraphics.defaultTileAtlas, new Vector2.Int32(10, 0), false, false, true, 60);
-        newTile("emerald_ore", GameGraphics.defaultTileAtlas, new Vector2.Int32(11, 0), false, false, true, 60);
-        newTile("lapis_ore", GameGraphics.defaultTileAtlas, new Vector2.Int32(12, 0), false, false, true, 60);
-        newTile("diamond_ore", GameGraphics.defaultTileAtlas, new Vector2.Int32(13, 0), false, false, true, 60);
+        newTile("thick_oak_leaves", GameGraphics.defaultTileAtlas, new Vector2.Int32(5, 0), false, false, true, OPAQUE_BLOCK);
+        newTile("bedrock", GameGraphics.defaultTileAtlas, new Vector2.Int32(6, 0), false, false, false, OPAQUE_BLOCK);
+        newTile("coal_ore", GameGraphics.defaultTileAtlas, new Vector2.Int32(7, 0), false, false, true, OPAQUE_BLOCK);
+        newTile("iron_ore", GameGraphics.defaultTileAtlas, new Vector2.Int32(8, 0), false, false, true, OPAQUE_BLOCK);
+        newTile("redstone_ore", GameGraphics.defaultTileAtlas, new Vector2.Int32(9, 0), false, false, true, OPAQUE_BLOCK);
+        newTile("gold_ore", GameGraphics.defaultTileAtlas, new Vector2.Int32(10, 0), false, false, true, OPAQUE_BLOCK);
+        newTile("emerald_ore", GameGraphics.defaultTileAtlas, new Vector2.Int32(11, 0), false, false, true, OPAQUE_BLOCK);
+        newTile("lapis_ore", GameGraphics.defaultTileAtlas, new Vector2.Int32(12, 0), false, false, true, OPAQUE_BLOCK);
+        newTile("diamond_ore", GameGraphics.defaultTileAtlas, new Vector2.Int32(13, 0), false, false, true, OPAQUE_BLOCK);
         newTile("glass", GameGraphics.defaultTileAtlas, new Vector2.Int32(0, 1), true, false, true, 0);
-        newTile("bricks", GameGraphics.defaultTileAtlas, new Vector2.Int32(1, 1), false, false, true, 60);
-        newTile("cobblestone", GameGraphics.defaultTileAtlas, new Vector2.Int32(2, 1), false, false, true, 60);
-        newTile("oak_planks", GameGraphics.defaultTileAtlas, new Vector2.Int32(3, 1), false, false, true, 60);
+        newTile("bricks", GameGraphics.defaultTileAtlas, new Vector2.Int32(1, 1), false, false, true, OPAQUE_BLOCK);
+        newTile("cobblestone", GameGraphics.defaultTileAtlas, new Vector2.Int32(2, 1), false, false, true, OPAQUE_BLOCK);
+        newTile("oak_planks", GameGraphics.defaultTileAtlas, new Vector2.Int32(3, 1), false, false, true, OPAQUE_BLOCK);
         newTile("grass", GameGraphics.defaultTileAtlas, new Vector2.Int32(4, 1), true, true, true, 0);
-        newTile("sand", GameGraphics.defaultTileAtlas, new Vector2.Int32(5, 1), false, false, true, 45);
-        newTile("gravel", GameGraphics.defaultTileAtlas, new Vector2.Int32(6, 1), false, false, true, 50);
-        newTile("water", GameGraphics.defaultTileAtlas, new Vector2.Int32(7, 1), true, true, false, 30);
+        newTile("sand", GameGraphics.defaultTileAtlas, new Vector2.Int32(5, 1), false, false, true, OPAQUE_BLOCK);
+        newTile("gravel", GameGraphics.defaultTileAtlas, new Vector2.Int32(6, 1), false, false, true, OPAQUE_BLOCK);
+        newTile("water", GameGraphics.defaultTileAtlas, new Vector2.Int32(7, 1), true, true, false, 50);
         newTile("torch", GameGraphics.defaultTileAtlas, new Vector2.Int32(8, 1), true, true, true, 0);
-    }
+    } // theres gotta be a better way...
 
     // Returns the Tile instance that has the matching ID
     public static Tile getTile(int ID) {

@@ -111,7 +111,7 @@ public class GameGraphics {
                     // Render shadow
                     if(!GameSettings.xRayModeOn && j < Lighting.lightLevelMap[0].length) {
                         g.setColor(new Color(0, 0, 0, 255-Lighting.lightLevelMap[i][j] < 0 ? 0 : 255-Lighting.lightLevelMap[i][j]));
-                        g.fillRect(j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset, i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset, Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale, Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale);
+                        g.fillRect((j * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + xOffset), i * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale + yOffset, Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale, Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale);
                     }
 
                     // Block selection with mouse

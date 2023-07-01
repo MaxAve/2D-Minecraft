@@ -27,7 +27,7 @@ public class Frame extends JFrame {
 		        mouseClickX = e.getX();
 		        mouseClickY = e.getY();
                 try {
-                    if(Tile.getTile(Terrain.overworld[Terrain.selectedBlockY][Terrain.selectedBlockX]).soft
+                    if(Tile.getTile(Terrain.overworld[Terrain.selectedBlockY][Terrain.selectedBlockX]).name == "air"
                     && !(Tile.getTile(Terrain.overworld[Terrain.selectedBlockY+1][Terrain.selectedBlockX]).name.equals("air")
                     && Tile.getTile(Terrain.overworld[Terrain.selectedBlockY-1][Terrain.selectedBlockX]).name.equals("air")
                     && Tile.getTile(Terrain.overworld[Terrain.selectedBlockY][Terrain.selectedBlockX+1]).name.equals("air")
@@ -48,8 +48,8 @@ public class Frame extends JFrame {
                                         particleTexture[a][b] = blockTexture[a+xOffset][b+yOffset];
                                 // Summon particle
                                 new Particle(
-                                    new Vector2.Float32(Terrain.selectedBlockX * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale - Panel.playerX + (Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale)/2 + random.nextInt(30)-15,
-                                    Terrain.selectedBlockY * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale - Panel.playerY + (Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale)/2 + random.nextInt(30)-15),
+                                    new Vector2.Float32(Terrain.selectedBlockX * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale - (int)(Panel.playerX * GameSettings.tileRenderScale * Tile.DEFAULT_TILE_SIZE) + (Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale)/2 + random.nextInt(30)-15,
+                                    Terrain.selectedBlockY * Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale - (int)(Panel.playerY * GameSettings.tileRenderScale * Tile.DEFAULT_TILE_SIZE) + (Tile.DEFAULT_TILE_SIZE * GameSettings.tileRenderScale)/2 + random.nextInt(30)-15),
                                     new Vector2.Float32(random.nextInt(10)-5,
                                     random.nextInt(10)-5),
                                     true,

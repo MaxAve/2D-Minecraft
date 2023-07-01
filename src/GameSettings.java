@@ -1,15 +1,10 @@
 public class GameSettings {
-    /*
-     * Real-time game settings (toggleable during gameplay)
-     */
-    public static boolean xRayModeOn = true;
-    public static int tileRenderScale = 7;
+    public static boolean xRayModeOn = false;
+    public static int tileRenderScale = 8;
     public static int tileRenderDistance = 1300;
-    public static boolean showDebug = true;
+    public static boolean showDebug = false;
 
-    /*
-     * Ores
-     */
+    // Ore
     public static double coalOreGenerationChance = 0.3;
     public static int coalOreVeinSpreadChance = 20;
     public static int coalOreVeinSizeIncrease = 3;
